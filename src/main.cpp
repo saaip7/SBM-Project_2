@@ -1,3 +1,23 @@
+/**
+ * Author: Syaifullah Hilmi M | 22/497775/TK/54567
+ * Github: https://github.com/saaip7/SBM-Project_2
+ * Description: This project integrates multiple sensors (DHT22, HC-SR04) with an ESP32 and displays
+ *              the sensor data on a TFT screen using LVGL. The touch functionality is handled using 
+ *              an XPT2046 touchscreen controller.
+ * 
+ * Sensors Used:
+ * - DHT22 (Temperature and Humidity Sensor)
+ * - HC-SR04 (Ultrasonic Distance Sensor)
+ * 
+ * Device Used:
+ * - ESP32 WROOM-32
+ * - TFT ILI9341 2.4" 240x320
+ * 
+ * LVGL Layout:
+ * The LVGL layout was created using SquareLine Studio, which simplifies the process of designing
+ * and managing LVGL-based GUIs.
+ */
+
 #include <lvgl.h>
 #include <TFT_eSPI.h>
 #include <SPI.h>
@@ -101,10 +121,12 @@ void my_touchpad_read(lv_indev_drv_t * indev_driver, lv_indev_data_t * data)
     }
 }
 
+//Declare All Variables needed in Global
 float temperature = 0.0;
 float hum = 0.0;
 float distance = 0.0;
 
+// Create Task to Read DHT Sensor
 void readDHTTask(void *pvParameters) {
     for (;;) {
         // Read temperature and humidity from DHT22
@@ -123,19 +145,20 @@ void readDHTTask(void *pvParameters) {
             String temperatureStr = String(roundedTemperature) + "°C";
             String humStr = String(roundedHum) + "%";
 
-            // Update the bars with sensor values
+            // Update the bars with sensor values (LVGL)
             lv_bar_set_value(ui_Bar5, roundedTemperature, LV_ANIM_OFF);
             lv_bar_set_value(ui_Bar3, roundedHum, LV_ANIM_OFF);
 
-            // Update the labels with the sensor strings
+            // Update the labels with the sensor strings (LVGL)
             lv_label_set_text(ui_Label14, temperatureStr.c_str());
             lv_label_set_text(ui_Label4, humStr.c_str());
         }
 
-        vTaskDelay(2000 / portTICK_PERIOD_MS); // Delay for 2 seconds
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
 }
 
+// Create Task to Read Ultrasonic Sensor
 void readUltrasonicTask(void *pvParameters) {
     for (;;) {
         // Clear the trigger pin
@@ -159,13 +182,14 @@ void readUltrasonicTask(void *pvParameters) {
         // Convert the rounded value to a string
         String distanceStr = String(roundedDistance);
 
-        // Update the label with the sensor string
-        lv_label_set_text(ui_Label9, distanceStr.c_str()); // Add a new label for distance in your LVGL layout
+        // Update the label with the sensor string (LVGL)
+        lv_label_set_text(ui_Label9, distanceStr.c_str());
 
-        vTaskDelay(2000 / portTICK_PERIOD_MS); // Delay for 2 seconds
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
 }
 
+// Create Task for GUI (Basically it's part of the LVGL library created by Squareline Studio)
 void guiTask(void *pvParameters) {
     for (;;) {
         lv_timer_handler(); // Let the GUI do its work
@@ -175,7 +199,7 @@ void guiTask(void *pvParameters) {
 
 void setup()
 {
-    Serial.begin(115200); // Prepare for possible serial debug
+    Serial.begin(115200);
 
     String LVGL_Arduino = "Hello Arduino! ";
     LVGL_Arduino += String('V') + lv_version_major() + "." + lv_version_minor() + "." + lv_version_patch();
