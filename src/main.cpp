@@ -1,5 +1,6 @@
 /**
  * Author: Syaifullah Hilmi M | 22/497775/TK/54567
+ * Universitas Gadjah Mada
  * Github: https://github.com/saaip7/SBM-Project_2
  * Description: This project integrates multiple sensors (DHT22, HC-SR04) with an ESP32 and displays
  *              the sensor data on a TFT screen using LVGL. The touch functionality is handled using 
