@@ -51,6 +51,7 @@ DHT dht(DHTPIN, DHTTYPE);
 static const uint16_t screenWidth  = 320;
 static const uint16_t screenHeight = 240;
 
+// Setting up display buffer for LVGL
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[screenWidth * screenHeight / 10];
 
@@ -71,14 +72,19 @@ void my_print(const char * buf)
 // Display flushing
 void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
 {
+    // Calculate the width and height of the area to be flushed
     uint32_t w = (area->x2 - area->x1 + 1);
     uint32_t h = (area->y2 - area->y1 + 1);
 
+    // Set the address window on the TFT display to the area
     tft.startWrite();
     tft.setAddrWindow(area->x1, area->y1, w, h);
-    tft.pushColors((uint16_t *)&color_p->full, w * h, true);
-    tft.endWrite();
 
+    // Push the color data to the display
+    tft.pushColors((uint16_t *)&color_p->full, w * h, true);
+
+    // Signal to LVGL that the flushing is complete
+    tft.endWrite();
     lv_disp_flush_ready(disp);
 }
 
@@ -99,8 +105,6 @@ void my_touchpad_read(lv_indev_drv_t * indev_driver, lv_indev_data_t * data)
         data->state = LV_INDEV_STATE_PR;
         // Get the touch coordinates
         TS_Point p = touchscreen.getPoint();
-
-        // Set the state to press
 
         // Map the touch coordinates to the screen size
         // The touchpad coordinates go from 200 to 3700 in x axis and 240 to 3800 in y axis
