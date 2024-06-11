@@ -10,6 +10,9 @@ This source code is created to fulfill the final project assignment for the  _Si
 - Arduino/ESP-IDF Framework
 - LVGL Library is recommended
 
+![Image](https://github.com/saaip7/SBM-Project_2/blob/main/image.png)
+
+
 ## Table of Contents
 
 - [Introduction](#introduction)
